@@ -3,17 +3,21 @@ extern crate rand;
 use geometry::*;
 use rand::Rng;
 
-pub fn regular_lines(size: &Size) -> Vec<Line> {
+pub fn regular_lines(size: &Size) -> Group {
     let count = rand::thread_rng().gen_range(280, 320);
     let dist_between = size.width / count as f32;
 
-    (0..count+1).map(|i| {
+    let paths = (0..count+1).map(|i| {
         let x = i as f32 * dist_between;
-        make_line_at_x(x, size.height)
-    }).collect()
+        Path {
+            points: make_line_at_x(x, size.height),
+            closed: false
+        }
+    }).collect();
+    Group { paths }
 }
 
-fn make_line_at_x(x: f32, height: f32) -> Line {
+fn make_line_at_x(x: f32, height: f32) -> Vec<Point> {
     let segments = 1300;
     let dist_between = height / segments as f32;
 
