@@ -1,0 +1,8 @@
+[package]
+name = "describe"
+version = "0.0.1"
+authors = [ "David Sweetman <david@davidsweetman.com>" ]
+
+[dependencies]
+rand = "0.4"
+euclid = "0.16"
