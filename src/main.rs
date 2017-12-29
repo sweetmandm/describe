@@ -60,4 +60,3 @@ fn line_to_path(line: &Line) -> String {
 fn path_op(op: char, point: &Point) -> String {
     format!("{} {} {} ", op, point.x, point.y)
 }
-
