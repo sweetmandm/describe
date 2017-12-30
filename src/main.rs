@@ -8,12 +8,12 @@ mod output;
 use geometry::*;
 
 fn main() {
-    let in_size = Size { width: 1024.0, height: 768.0 };
-    let out_size = Size { width: 2024.0, height: 1768.0 };
+    let in_size = Size::new(1024.0, 768.0);
+    let out_size = Size::new(2024.0, 1768.0);
 
-    let geom = input::regular_lines(&in_size);
-    let result = disturb::jagged_waves(geom);
-    let svg = output::group_to_svg(result, &out_size);
+    let mut geom = input::lines::build(&in_size);
+    geom = disturb::jagged_waves::apply(geom);
+    let svg = output::svg::build(geom, &out_size);
 
     println!("{}", svg)
 }

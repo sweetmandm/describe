@@ -1,6 +1,6 @@
 use geometry::*;
 
-pub fn group_to_svg(group: Group, size: &Size) -> String {
+pub fn build(group: Group, size: &Size) -> String {
     let head = format!(r#"<svg width="{}" height="{}" viewbox="0 0 {} {}" xmlns="http://www.w3.org/2000/svg">"#, size.width, size.height, size.width, size.height);
 
     let body = group.paths.iter().fold("".to_string(), |val, path| {
