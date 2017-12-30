@@ -5,24 +5,13 @@ use rand::Rng;
 
 pub fn apply(group: Group) -> Group {
     group.jaggify()
-         .shift(Point::new(1036.0, 20.0, 0.0))
+         .shift(Vector::new(1036.0, 20.0, 0.0))
          .swap_xy()
          .jaggify()
-         .shift(Point::new(1036.0, 20.0, 0.0))
+         .shift(Vector::new(1036.0, 20.0, 0.0))
 }
 
 impl Group {
-    pub fn each_point(&self, func: &Fn(&Point) -> Point) -> Self {
-        Group {
-            paths: self.paths.iter().map(|path| {
-                Path {
-                    points: path.points.iter().map(|pos| { func(pos) }).collect(),
-                    closed: path.closed
-                }
-            }).collect()
-        }
-    }
-
     fn jaggify(&self) -> Group {
         let wind_dir = Point::new(0.4, -1.0, 0.0);
         let wave_height = rand::thread_rng().gen_range(1.0, 8.0);
@@ -53,16 +42,14 @@ impl Group {
         })
     }
 
-    pub fn shift(&self, amount: Point) -> Group {
+    pub fn shift(&self, amount: Vector) -> Group {
         self.each_point(&|pos| {
-            Point::new(pos.x + amount.x, pos.y + amount.y, pos.z + amount.z)
+            *pos + amount
         })
     }
 
     pub fn swap_xy(&self) -> Group {
-        self.each_point(&|pos| {
-            Point::new(pos.y, pos.x, pos.z)
-        })
+        self.each_point(&Point::yx)
     }
 }
 
