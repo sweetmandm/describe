@@ -1,0 +1,65 @@
+pub struct Graph<T> {
+    pub nodes: Vec<Node<T>>,
+    pub edges: Vec<Edge>
+}
+
+pub type NodeIndex = usize;
+
+pub struct Node<T> {
+    pub data: T,
+    pub first_edge: Option<EdgeIndex>,
+    pub dead: bool
+}
+
+impl<T> Node<T> {
+    pub fn new(data: T) -> Node<T> {
+        Node { data, first_edge: None, dead: false }
+    }
+}
+
+pub type EdgeIndex = usize;
+
+pub struct Edge {
+    target: NodeIndex,
+    next: Option<EdgeIndex>
+}
+
+impl<T> Graph<T> {
+    pub fn new() -> Graph<T> {
+        Graph {
+            nodes: Vec::new(),
+            edges: Vec::new()
+        }
+    }
+
+    pub fn add_node(&mut self, data: T) -> NodeIndex {
+        let node_index = self.nodes.len();
+        let node = Node::new(data);
+        self.nodes.push(node);
+        node_index
+    }
+
+    pub fn add_edge(&mut self, source: NodeIndex, target: NodeIndex) {
+        let edge_index = self.edges.len();
+        let node = &mut self.nodes[source];
+        let edge = Edge {
+            target: target,
+            next: node.first_edge
+        };
+        self.edges.push(edge);
+        node.first_edge = Some(edge_index);
+    }
+
+    #[allow(dead_code)]
+    pub fn kill_node(&mut self, ix: NodeIndex) {
+        (&mut self.nodes[ix]).dead = true;
+    }
+
+    pub fn update_node_data(&mut self, ix: NodeIndex, data: T) {
+        (&mut self.nodes[ix]).data = data;
+    }
+
+    pub fn edge_target(&self, edge_index: EdgeIndex) -> &Node<T> {
+        &self.nodes[self.edges[edge_index].target]
+    }
+}
