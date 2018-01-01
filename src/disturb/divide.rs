@@ -6,7 +6,7 @@ use graph::*;
 
 #[allow(dead_code)]
 pub fn run(mut graph: Graph<Point>) -> Graph<Point> {
-    for _ in 0..50 {
+    for _ in 0..60 {
         graph = step(graph);
     }
     graph
@@ -16,12 +16,15 @@ fn step(mut graph: Graph<Point>) -> Graph<Point> {
     let mut new = Vec::new();
     let mut updated = Vec::new();
     for (i, node) in graph.nodes.iter().enumerate() {
-        if rand::thread_rng().gen_range(0, 6) == 5 {
-            {
+        let r = rand::thread_rng().gen_range(0, 6);
+        match r {
+            1 => {
                 let result = split(node.data);
                 updated.push((i, result.0));
                 new.push((i, result.1));
             }
+            _ => { ; }
+
         }
     }
     for pair in updated {

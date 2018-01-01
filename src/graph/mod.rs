@@ -20,8 +20,8 @@ impl<T> Node<T> {
 pub type EdgeIndex = usize;
 
 pub struct Edge {
-    target: NodeIndex,
-    next: Option<EdgeIndex>
+    pub target: NodeIndex,
+    pub next: Option<EdgeIndex>
 }
 
 impl<T> Graph<T> {
@@ -59,7 +59,11 @@ impl<T> Graph<T> {
         (&mut self.nodes[ix]).data = data;
     }
 
-    pub fn edge_target(&self, edge_index: EdgeIndex) -> &Node<T> {
-        &self.nodes[self.edges[edge_index].target]
+    pub fn node(&self, node_index: NodeIndex) -> &Node<T> {
+        &self.nodes[node_index]
+    }
+
+    pub fn edge(&self, edge_index: EdgeIndex) -> &Edge {
+        &self.edges[edge_index]
     }
 }
