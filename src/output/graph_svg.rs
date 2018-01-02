@@ -4,14 +4,12 @@ use graph::*;
 pub fn build(graph: Graph<Point>, size: &Size) -> String {
     let head = format!(r#"<svg width="{}" height="{}" viewbox="0 0 {} {}" xmlns="http://www.w3.org/2000/svg">"#, size.width, size.height, size.width, size.height);
 
-    let body = graph.nodes.iter().fold("".to_string(), |val, node| {
-        let edges = edge_to_svg(&graph, "".to_string(), node, node.first_edge, vec!());
-        [
-            val, 
-            "\n".to_string(), 
-            node_to_svg(node),
-            edges
-        ].concat()
+    let mut body = "".to_string();
+    let mut seen = Vec::new();
+    traverse(&graph, None, 0, &mut seen, &mut|from_i_opt, to_i| {
+        if let Some(from_i) = from_i_opt {
+            body.push_str(&edge_to_svg(&graph, from_i, to_i));
+        }
     });
 
     let foot = "</svg>";
@@ -19,24 +17,36 @@ pub fn build(graph: Graph<Point>, size: &Size) -> String {
     [&head, &body, foot].join("\n")
 }
 
-fn node_to_svg(node: &Node<Point>) -> String {
-    if node.dead { return "".to_string(); }
-    format!(r#"<circle cx="{}" cy="{}" r="1.0" style="fill:none;stroke-width:1;stroke:rgb(0,0,0)" />"#, node.data.x, node.data.y)
+fn traverse<F, T>(graph: &Graph<T>,
+                  source_i: Option<NodeIndex>,
+                  target_i: NodeIndex,
+                  seen: &mut Vec<NodeIndex>,
+                  f: &mut F)
+    where F: FnMut(Option<NodeIndex>, NodeIndex)
+{
+    if seen.contains(&target_i) { return; }
+    f(source_i, target_i);
+    seen.push(target_i);
+    for e in graph.successors(target_i) {
+        let next_target = graph.edge(e).target;
+        traverse(graph, Some(target_i), next_target, seen, f);
+    }
 }
 
-fn edge_to_svg(graph: &Graph<Point>, 
-               acc: String, 
-               source: &Node<Point>, 
-               edge_i: Option<EdgeIndex>,
-               visited: Vec<NodeIndex>) -> String 
-{
-    if None == edge_i || source.dead { return acc; }
-    let edge = graph.edge(edge_i.unwrap());
-    let target = graph.node(edge.target);
+fn node_to_svg(node: &Node<Point>) -> String {
+    if node.dead { return "".to_string(); }
+    format!(r#"<circle cx="{}" cy="{}" r="8.0"
+            style="fill:none;stroke-width:4;stroke:rgb(0,0,0)" />"#,
+            node.data.x, node.data.y)
+}
+
+fn edge_to_svg(graph: &Graph<Point>, from_i: NodeIndex, to_i: NodeIndex) -> String {
+    let from = graph.node(from_i);
+    let to = graph.node(to_i);
+    let n = node_to_svg(from);
     let s = format!(r#"<path d="M {} {} L {} {}"
                     style="fill:none;stroke-width:1;stroke:rgb(0,0,0)" />"#, 
-                    source.data.x, source.data.y, 
-                    target.data.x, target.data.y);
-
-    edge_to_svg(graph, format!("{}{}", acc, s), target, edge.next, vec!())
+                    from.data.x, from.data.y, 
+                    to.data.x, to.data.y);
+    format!("{}{}", n, s)
 }

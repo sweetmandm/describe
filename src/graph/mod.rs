@@ -66,4 +66,30 @@ impl<T> Graph<T> {
     pub fn edge(&self, edge_index: EdgeIndex) -> &Edge {
         &self.edges[edge_index]
     }
+
+    pub fn successors(&self, source: NodeIndex) -> Successors<T> {
+        let first_edge = self.nodes[source].first_edge;
+        Successors { graph: self, current_edge_index: first_edge }
+    }
 }
+
+pub struct Successors<'graph, T: 'graph> {
+    graph: &'graph Graph<T>,
+    current_edge_index: Option<EdgeIndex>,
+}
+
+impl<'graph, T> Iterator for Successors<'graph, T> {
+    type Item = NodeIndex;
+
+    fn next(&mut self) -> Option<NodeIndex> {
+        match self.current_edge_index {
+            None => None,
+            Some(edge_i) => {
+                let edge = &self.graph.edge(edge_i);
+                self.current_edge_index = edge.next;
+                Some(edge_i)
+            }
+        }
+    }
+}
+
