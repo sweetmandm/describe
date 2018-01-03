@@ -6,7 +6,7 @@ pub fn build(graph: Graph<Point>, size: &Size) -> String {
 
     let mut body = "".to_string();
     let mut seen = Vec::new();
-    traverse(&graph, None, 0, &mut seen, &mut|from_i_opt, to_i| {
+    graph.traverse(None, 0, &mut seen, &mut|from_i_opt, to_i| {
         if let Some(from_i) = from_i_opt {
             body.push_str(&edge_to_svg(&graph, from_i, to_i));
         }
@@ -17,26 +17,10 @@ pub fn build(graph: Graph<Point>, size: &Size) -> String {
     [&head, &body, foot].join("\n")
 }
 
-fn traverse<F, T>(graph: &Graph<T>,
-                  source_i: Option<NodeIndex>,
-                  target_i: NodeIndex,
-                  seen: &mut Vec<NodeIndex>,
-                  f: &mut F)
-    where F: FnMut(Option<NodeIndex>, NodeIndex)
-{
-    if seen.contains(&target_i) { return; }
-    f(source_i, target_i);
-    seen.push(target_i);
-    for e in graph.successors(target_i) {
-        let next_target = graph.edge(e).target;
-        traverse(graph, Some(target_i), next_target, seen, f);
-    }
-}
-
 fn node_to_svg(node: &Node<Point>) -> String {
     if node.dead { return "".to_string(); }
-    format!(r#"<circle cx="{}" cy="{}" r="8.0"
-            style="fill:none;stroke-width:4;stroke:rgb(0,0,0)" />"#,
+    format!(r#"<circle cx="{}" cy="{}" r="2.0"
+            style="fill:none;stroke-width:1;stroke:rgb(0,0,0)" />"#,
             node.data.x, node.data.y)
 }
 

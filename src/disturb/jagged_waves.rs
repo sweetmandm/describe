@@ -3,7 +3,7 @@ extern crate rand;
 use geometry::*;
 use rand::Rng;
 
-pub fn apply(group: Group) -> Group {
+pub fn apply(group: SvgGroup) -> SvgGroup {
     group.jaggify()
          .shift(Vector::new(1036.0, 20.0, 0.0))
          .swap_xy()
@@ -11,8 +11,8 @@ pub fn apply(group: Group) -> Group {
          .shift(Vector::new(1036.0, 20.0, 0.0))
 }
 
-impl Group {
-    fn jaggify(&self) -> Group {
+impl SvgGroup {
+    fn jaggify(&self) -> SvgGroup {
         let wind_dir = Point::new(0.4, -1.0, 0.0);
         let wave_height = rand::thread_rng().gen_range(1.0, 8.0);
         let time = 800.0;
@@ -42,13 +42,13 @@ impl Group {
         })
     }
 
-    pub fn shift(&self, amount: Vector) -> Group {
+    pub fn shift(&self, amount: Vector) -> SvgGroup {
         self.each_point(&|pos| {
             *pos + amount
         })
     }
 
-    pub fn swap_xy(&self) -> Group {
+    pub fn swap_xy(&self) -> SvgGroup {
         self.each_point(&Point::yx)
     }
 }

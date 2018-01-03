@@ -4,7 +4,7 @@ use geometry::*;
 use rand::Rng;
 
 #[allow(dead_code)]
-pub fn build(size: &Size) -> Group {
+pub fn build(size: &Size) -> SvgGroup {
     let count = rand::thread_rng().gen_range(280, 320);
     let dist_between = size.width / count as f32;
 
@@ -15,7 +15,7 @@ pub fn build(size: &Size) -> Group {
             closed: false
         }
     }).collect();
-    Group { paths }
+    SvgGroup { paths }
 }
 
 #[allow(dead_code)]

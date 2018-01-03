@@ -4,7 +4,7 @@ use geometry::*;
 use rand::Rng;
 
 #[allow(dead_code)]
-pub fn build_centered(size: &Size) -> Group {
+pub fn build_centered(size: &Size) -> SvgGroup {
     let count = rand::thread_rng().gen_range(20, 90);
     let dist_between = size.width / count as f32;
     let center = Point::new(size.width / 2.0, size.height / 2.0, 0.0);
@@ -16,11 +16,11 @@ pub fn build_centered(size: &Size) -> Group {
             closed: true
         }
     }).collect();
-    Group { paths }
+    SvgGroup { paths }
 }
 
 #[allow(dead_code)]
-pub fn build_random(size: &Size) -> Group {
+pub fn build_random(size: &Size) -> SvgGroup {
     let count = rand::thread_rng().gen_range(8, 30);
 
     let paths = (0..count+1).map(|_| {
@@ -33,7 +33,7 @@ pub fn build_random(size: &Size) -> Group {
             closed: true
         }
     }).collect();
-    Group { paths }
+    SvgGroup { paths }
 }
 
 #[allow(dead_code)]

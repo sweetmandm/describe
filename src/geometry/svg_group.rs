@@ -1,13 +1,13 @@
 use path::*;
 use point::*;
 
-pub struct Group {
+pub struct SvgGroup {
     pub paths: Vec<Path>
 }
 
-impl Group {
+impl SvgGroup {
     pub fn each_point(&self, func: &Fn(&Point) -> Point) -> Self {
-        Group {
+        SvgGroup {
             paths: self.paths.iter().map(|path| {
                 Path {
                     points: path.points.iter().map(&func).collect(),
