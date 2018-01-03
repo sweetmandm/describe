@@ -15,21 +15,20 @@ pub type NodeIndex = usize;
 
 pub struct Node<T> {
     pub data: T,
-    pub first_edge: Option<EdgeIndex>,
     pub dead: bool
 }
 
 impl<T> Node<T> {
     pub fn new(data: T) -> Node<T> {
-        Node { data, first_edge: None, dead: false }
+        Node { data, dead: false }
     }
 }
 
 pub type EdgeIndex = usize;
 
 pub struct Edge {
-    pub target: NodeIndex,
-    pub next: Option<EdgeIndex>
+    pub a: NodeIndex,
+    pub b: NodeIndex,
 }
 
 impl<T> Graph<T> {
@@ -56,10 +55,13 @@ impl<T> Graph<T> {
     }
 
     pub fn extend(&mut self, group_i: GroupIndex, data: T) -> Option<EdgeIndex> {
-        if self.groups[group_i].root == None { return None; }
         let new_index = self.add_node(data);
+        if self.groups[group_i].root == None {
+            self.groups[group_i].root = Some(new_index);
+            return None;
+        }
         let source = match self.groups[group_i].edges.last() {
-            Some(e) => e.target,
+            Some(e) => e.b,
             None => self.groups[group_i].root.unwrap()
         };
         Some(self.add_edge(group_i, source, new_index))
@@ -87,68 +89,28 @@ impl<T> Graph<T> {
     {
         let group = &mut self.groups[group_i];
         let edge_index = group.edges.len();
-        let node = &mut self.nodes[source];
         let edge = Edge {
-            target: target,
-            next: node.first_edge
+            a: source,
+            b: target
         };
         group.edges.push(edge);
-        node.first_edge = Some(edge_index);
         edge_index
     }
 
-    pub fn successors<'a>(&'a self, group: &'a Group, source: NodeIndex) -> Successors {
-        let current_edge_index = self.nodes[source].first_edge;
-        Successors { group, current_edge_index }
-    }
-
-    pub fn traverse<F>(&self,
-                      source_i: Option<NodeIndex>,
-                      target_i: NodeIndex,
-                      seen: &mut Vec<NodeIndex>,
-                      f: &mut F)
-        where F: FnMut(Option<NodeIndex>, NodeIndex)
-        {
-            if seen.contains(&target_i) { return; }
-            f(source_i, target_i);
-            seen.push(target_i);
-            for g in self.groups.iter() {
-                for e in self.successors(&g, target_i) {
-                    let next_target = g.edge(e).target;
-                    self.traverse(Some(target_i), next_target, seen, f);
-                }
+    pub fn each_edge<F>(&self, f: &mut F)
+    where F: FnMut(NodeIndex, NodeIndex)
+    {
+        for g in &self.groups {
+            for e in &g.edges {
+                f(e.a, e.b);
             }
         }
-
+    }
 }
 
 impl Group {
     pub fn new() -> Group {
         Group { root: None, edges: Vec::new(), closed: false }
-    }
-
-    pub fn edge(&self, edge_index: EdgeIndex) -> &Edge {
-        &self.edges[edge_index]
-    }
-}
-
-pub struct Successors<'graph> {
-    group: &'graph Group,
-    current_edge_index: Option<EdgeIndex>,
-}
-
-impl<'graph> Iterator for Successors<'graph> {
-    type Item = NodeIndex;
-
-    fn next(&mut self) -> Option<NodeIndex> {
-        match self.current_edge_index {
-            None => None,
-            Some(edge_i) => {
-                let edge = &self.group.edge(edge_i);
-                self.current_edge_index = edge.next;
-                Some(edge_i)
-            }
-        }
     }
 }
 

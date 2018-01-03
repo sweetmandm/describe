@@ -3,12 +3,6 @@ use rand::Rng;
 use graph::*;
 use geometry::*;
 
-pub fn single_centered_node(size: &Size) -> Graph<Point> {
-    let mut graph = Graph::new();
-    graph.add_node(size.center());
-    graph
-}
-
 #[allow(dead_code)]
 pub fn build_centered(size: &Size) -> Graph<Point> {
     let count = rand::thread_rng().gen_range(10, 30);
@@ -46,7 +40,7 @@ pub fn build_random(size: &Size) -> Graph<Point> {
 
 #[allow(dead_code)]
 fn make_circle(center: &Point, radius: f32) -> Vec<Point> {
-    let segments = 1300;
+    let segments = 100;
     let dist_between = ::std::f32::consts::PI * 2.0 / segments as f32;
 
     (0..segments+1).map(|i| {

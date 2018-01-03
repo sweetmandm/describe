@@ -15,7 +15,7 @@ fn main() {
 #[allow(dead_code)]
 fn divide() {
     let size = Size::new(1024.0, 768.0);
-    let mut graph = input::graph::single_centered_node(&size);
+    let mut graph = input::graph::build_centered(&size);
     graph = disturb::divide::run(graph);
     let svg = output::graph_svg::build(graph, &size);
 
