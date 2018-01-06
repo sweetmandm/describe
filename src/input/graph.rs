@@ -53,3 +53,28 @@ fn make_circle(center: &Point, radius: f32) -> Vec<Point> {
         Point::new(x, y, 0.0)
     }).collect()
 }
+
+#[allow(dead_code)]
+pub fn lines(count: i32, size: &Size) -> Graph<Point> {
+    let dist_between = size.width / count as f32;
+
+    let mut graph = Graph::new();
+    for i in 0..count {
+        let group_i = graph.new_group(false);
+        let x = i as f32 * dist_between;
+        for point in make_line_at_x(x, size.height) {
+            graph.extend(group_i, point);
+        }
+    }
+    graph
+}
+
+#[allow(dead_code)]
+fn make_line_at_x(x: f32, height: f32) -> Vec<Point> {
+    let segments = 30;
+    let dist_between = height / segments as f32;
+
+    (0..segments+1).map(|i| {
+        Point::new(x, i as f32 * dist_between, 0.0)
+    }).collect()
+}

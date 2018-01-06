@@ -1,17 +1,18 @@
 pub mod point_ops;
 pub use self::point_ops::*;
 
-pub struct Graph<T: PartialEq> {
-    pub nodes: Vec<Node<T>>,
-    pub groups: Vec<Group>
-}
-
 pub type GroupIndex = usize;
 
 pub struct Group {
     pub root: Option<NodeIndex>,
     pub edges: Vec<Edge>,
     pub closed: bool
+}
+
+impl Group {
+    fn new() -> Group {
+        Group { root: None, edges: Vec::new(), closed: false }
+    }
 }
 
 pub type NodeIndex = usize;
@@ -32,6 +33,11 @@ pub type EdgeIndex = usize;
 pub struct Edge {
     pub a: NodeIndex,
     pub b: NodeIndex,
+}
+
+pub struct Graph<T: PartialEq> {
+    pub nodes: Vec<Node<T>>,
+    pub groups: Vec<Group>
 }
 
 impl<T: PartialEq> Graph<T> {
@@ -127,12 +133,6 @@ impl<T: PartialEq> Graph<T> {
     pub fn edge(&self, group_i: GroupIndex, edge_i: EdgeIndex) -> (NodeIndex, NodeIndex) {
         let e = &self.groups[group_i].edges[edge_i];
         (e.a, e.b)
-    }
-}
-
-impl Group {
-    pub fn new() -> Group {
-        Group { root: None, edges: Vec::new(), closed: false }
     }
 }
 

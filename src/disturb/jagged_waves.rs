@@ -1,31 +1,31 @@
 extern crate rand;
-
-use geometry::*;
 use rand::Rng;
+use geometry::*;
+use graph::*;
 
-pub fn apply(group: SvgGroup) -> SvgGroup {
-    group.jaggify()
+pub fn apply(graph: Graph<Point>) -> Graph<Point> {
+    graph.jaggify()
          .shift(Vector::new(1036.0, 20.0, 0.0))
          .swap_xy()
          .jaggify()
          .shift(Vector::new(1036.0, 20.0, 0.0))
 }
 
-impl SvgGroup {
-    fn jaggify(&self) -> SvgGroup {
+impl Graph<Point> {
+    fn jaggify(mut self) -> Self {
         let wind_dir = Point::new(0.4, -1.0, 0.0);
-        let wave_height = rand::thread_rng().gen_range(1.0, 8.0);
+        let wave_height = rand::thread_rng().gen_range(150.0, 380.0);
         let time = 800.0;
 
-        self.each_point(&|pos| {
+        for node_i in 0..self.nodes.len() {
+            let pos = self.nodes[node_i].data;
             let x_height = (1.0 * (pos.x + (wind_dir.y * time * 0.001))).sin() + 1.0;
             let y_height = (pos.y / 1.2 + (-wind_dir.y * time * 0.001)).sin();
             let main_wave = x_height + y_height;
             let aug_y_height = (pos.y / 2.0 + (-wind_dir.y * time * 0.1)).sin();
             let aug_x_height = (pos.x / 2.0 + (-wind_dir.x * time * 0.1)).sin();
-            let mut aug_wave = aug_x_height + aug_y_height;
+            let aug_wave = aug_x_height + aug_y_height;
             let triangle = (aug_wave + 0.5).abs() * 2.0;
-            aug_wave *= (time * 0.01).sin();
             let wave = wave_height * ((main_wave + aug_wave + triangle) / 2.0);
             let mut new_pos = Point::new(pos.x, pos.y, pos.z);
             new_pos.z = -(pos.x*pos.x / 40.0).abs();
@@ -38,18 +38,26 @@ impl SvgGroup {
             };
             new_pos.x += unit.x * wave * 0.3;
             new_pos.y += unit.y * (wave * 0.2);
-            new_pos
-        })
+            self.update_node_data(node_i, new_pos);
+        }
+        self
     }
 
-    pub fn shift(&self, amount: Vector) -> SvgGroup {
-        self.each_point(&|pos| {
-            *pos + amount
-        })
+    pub fn shift(mut self, amount: Vector) -> Self {
+        for node_i in 0..self.nodes.len() {
+            let pos = self.nodes[node_i].data;
+            self.update_node_data(node_i, pos + amount);
+        }
+        self
     }
 
-    pub fn swap_xy(&self) -> SvgGroup {
-        self.each_point(&Point::yx)
+    pub fn swap_xy(mut self) -> Self {
+        for node_i in 0..self.nodes.len() {
+            let pos = self.nodes[node_i].data;
+            let new_pos = Point::new(pos.y, pos.x, pos.z);
+            self.update_node_data(node_i, new_pos);
+        }
+        self
     }
 }
 

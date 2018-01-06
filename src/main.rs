@@ -15,24 +15,15 @@ fn main() {
 #[allow(dead_code)]
 fn divide() {
     let size = Size::new(1024.0, 768.0);
-    let mut graph = input::graph::build_random(&size);
-    graph = disturb::divide::run(graph, &size);
+    let line_count = 30;
+    let mut graph = input::graph::lines(line_count, &size);
+    graph = disturb::jagged_waves::apply(graph);
+
+    graph = disturb::divide::run(graph, 30);
 
     let svg = output::graph_svg::build(graph,
                                        &size,
                                        output::graph_svg::Style::edges());
-
-    println!("{}", svg)
-}
-
-#[allow(dead_code)]
-fn lines() {
-    let in_size = Size::new(1024.0, 768.0);
-    let out_size = Size::new(2024.0, 1768.0);
-
-    let mut geom = input::lines::build(&in_size);
-    geom = disturb::jagged_waves::apply(geom);
-    let svg = output::svg::build(geom, &out_size);
 
     println!("{}", svg)
 }
