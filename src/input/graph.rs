@@ -5,8 +5,8 @@ use geometry::*;
 
 #[allow(dead_code)]
 pub fn build_centered(size: &Size) -> Graph<Point> {
-    let count = rand::thread_rng().gen_range(10, 30);
-    let dist_between = size.width / count as f32;
+    let count = rand::thread_rng().gen_range(4, 10);
+    let dist_between = 5.0;
     let center = Point::new(size.width / 2.0, size.height / 2.0, 0.0);
     let mut graph = Graph::new();
 

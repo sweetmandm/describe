@@ -1,4 +1,7 @@
-pub struct Graph<T> {
+pub mod point_ops;
+pub use self::point_ops::*;
+
+pub struct Graph<T: PartialEq> {
     pub nodes: Vec<Node<T>>,
     pub groups: Vec<Group>
 }
@@ -18,7 +21,7 @@ pub struct Node<T> {
     pub dead: bool
 }
 
-impl<T> Node<T> {
+impl<T: PartialEq> Node<T> {
     pub fn new(data: T) -> Node<T> {
         Node { data, dead: false }
     }
@@ -31,7 +34,7 @@ pub struct Edge {
     pub b: NodeIndex,
 }
 
-impl<T> Graph<T> {
+impl<T: PartialEq> Graph<T> {
     pub fn new() -> Graph<T> {
         Graph {
             nodes: Vec::new(),
@@ -64,7 +67,10 @@ impl<T> Graph<T> {
             Some(e) => e.b,
             None => self.groups[group_i].root.unwrap()
         };
-        Some(self.add_edge(group_i, source, new_index))
+        match self.add_edge(group_i, (source, new_index)) {
+            Some(e) => Some(e),
+            None => None
+        }
     }
 
     #[allow(dead_code)]
@@ -83,28 +89,44 @@ impl<T> Graph<T> {
 
     pub fn add_edge(&mut self,
                     group_i: GroupIndex,
-                    source: NodeIndex,
-                    target: NodeIndex)
-        -> EdgeIndex
+                    e: (NodeIndex, NodeIndex))
+        -> Option<EdgeIndex>
     {
+        if self.node(e.0).data == self.node(e.1).data { return None; }
         let group = &mut self.groups[group_i];
         let edge_index = group.edges.len();
         let edge = Edge {
-            a: source,
-            b: target
+            a: e.0,
+            b: e.1
         };
         group.edges.push(edge);
-        edge_index
+        Some(edge_index)
+    }
+
+    pub fn update_edge(&mut self,
+                       group_i: GroupIndex,
+                       e: EdgeIndex,
+                       value: (NodeIndex, NodeIndex))
+    {
+        if self.node(value.0).data == self.node(value.1).data { return; }
+        let group = &mut self.groups[group_i];
+        group.edges[e].a = value.0;
+        group.edges[e].b = value.1;
     }
 
     pub fn each_edge<F>(&self, f: &mut F)
-    where F: FnMut(NodeIndex, NodeIndex)
+    where F: FnMut(GroupIndex, EdgeIndex)
     {
-        for g in &self.groups {
-            for e in &g.edges {
-                f(e.a, e.b);
+        for (group_i, g) in (&self.groups).iter().enumerate() {
+            for e in 0..g.edges.len() {
+                f(group_i, e);
             }
         }
+    }
+
+    pub fn edge(&self, group_i: GroupIndex, edge_i: EdgeIndex) -> (NodeIndex, NodeIndex) {
+        let e = &self.groups[group_i].edges[edge_i];
+        (e.a, e.b)
     }
 }
 

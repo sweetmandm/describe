@@ -16,7 +16,7 @@ fn main() {
 fn divide() {
     let size = Size::new(1024.0, 768.0);
     let mut graph = input::graph::build_centered(&size);
-    graph = disturb::divide::run(graph);
+    graph = disturb::divide::run(graph, &size);
     let svg = output::graph_svg::build(graph, &size);
 
     println!("{}", svg)
