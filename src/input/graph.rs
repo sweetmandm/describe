@@ -24,14 +24,17 @@ pub fn build_centered(size: &Size) -> Graph<Point> {
 pub fn build_random(size: &Size) -> Graph<Point> {
     let count = rand::thread_rng().gen_range(8, 30);
     let mut graph = Graph::new();
+    let center = size.center();
 
-    for _ in 0..count+1 {
-        let x = rand::thread_rng().gen_range(0.0, size.width);
-        let y = rand::thread_rng().gen_range(0.0, size.height);
-        let r = rand::thread_rng().gen_range(size.width / 18.0, size.width / 10.0);
-        let center = Point::new(x, y, 0.0);
+    for _ in 0..count {
+        let x = rand::thread_rng().gen_range(0.0, size.width + 1.0);
+        let y = rand::thread_rng().gen_range(0.0, size.height + 1.0);
+        let point = Point::new(x, y, 0.0);
+        let dist = point.dist(center);
+        let circle_size = (size.width / 2.0 - dist) / size.width;
+        let r = circle_size * 240.0;
         let group_i = graph.new_group(true);
-        for point in make_circle(&center, size.height / 8.0 + r) {
+        for point in make_circle(&point, r) {
             graph.extend(group_i, point);
         }
     }

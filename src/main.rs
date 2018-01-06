@@ -15,9 +15,12 @@ fn main() {
 #[allow(dead_code)]
 fn divide() {
     let size = Size::new(1024.0, 768.0);
-    let mut graph = input::graph::build_centered(&size);
+    let mut graph = input::graph::build_random(&size);
     graph = disturb::divide::run(graph, &size);
-    let svg = output::graph_svg::build(graph, &size);
+
+    let svg = output::graph_svg::build(graph,
+                                       &size,
+                                       output::graph_svg::Style::edges());
 
     println!("{}", svg)
 }
