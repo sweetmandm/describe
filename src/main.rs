@@ -15,11 +15,11 @@ fn main() {
 #[allow(dead_code)]
 fn divide() {
     let size = Size::new(1024.0, 768.0);
-    let line_count = 1800;
+    let line_count = 300;
     let mut graph = input::graph::lines(line_count, &size);
-    graph = disturb::erode::run(graph, &size, 18);
+    graph = disturb::erode::run(graph, &size, 480);
 
-    graph = disturb::jagged_waves::apply(graph);
+    graph = disturb::holes::apply(graph);
 
     let svg = output::graph_svg::build(graph,
                                        &size,

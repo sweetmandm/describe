@@ -18,7 +18,7 @@ fn step(mut graph: Graph<Point>, size: &Size) -> Graph<Point> {
     let x = rand::thread_rng().gen_range(0.0, size.width + 1.0);
     let y = rand::thread_rng().gen_range(0.0, size.height + 1.0);
     let point = Point::new(x, y, 0.0);
-    let r = 80.0;
+    let r = 8.0;
 
     graph.each_edge(&mut|group_i, edge_i| {
         let (a, b) = graph.edge(group_i, edge_i);

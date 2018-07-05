@@ -39,23 +39,6 @@ impl Graph<Point> {
         }
         self
     }
-
-    pub fn shift(mut self, amount: Vector) -> Self {
-        for node_i in 0..self.nodes.len() {
-            let pos = self.nodes[node_i].data;
-            self.update_node_data(node_i, pos + amount);
-        }
-        self
-    }
-
-    pub fn swap_xy(mut self) -> Self {
-        for node_i in 0..self.nodes.len() {
-            let pos = self.nodes[node_i].data;
-            let new_pos = Point::new(pos.y, pos.x, pos.z);
-            self.update_node_data(node_i, new_pos);
-        }
-        self
-    }
 }
 
 fn sign(val: f32) -> f32 {

@@ -17,6 +17,23 @@ impl Graph<Point> {
         let b = mid(&self.nodes[a].data, &self.nodes[c].data);
         ((&self.nodes[a].data).clone(), b, (&self.nodes[c].data).clone())
     }
+
+    pub fn swap_xy(mut self) -> Self {
+        for node_i in 0..self.nodes.len() {
+            let pos = self.nodes[node_i].data;
+            let new_pos = Point::new(pos.y, pos.x, pos.z);
+            self.update_node_data(node_i, new_pos);
+        }
+        self
+    }
+
+    pub fn shift(mut self, amount: Vector) -> Self {
+        for node_i in 0..self.nodes.len() {
+            let pos = self.nodes[node_i].data;
+            self.update_node_data(node_i, pos + amount);
+        }
+        self
+    }
 }
 
 fn mid(a: &Point, b: &Point) -> Point {
