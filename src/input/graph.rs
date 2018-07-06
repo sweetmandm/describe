@@ -54,27 +54,30 @@ fn make_circle(center: &Point, radius: f32) -> Vec<Point> {
     }).collect()
 }
 
-#[allow(dead_code)]
-pub fn lines(count: i32, size: &Size) -> Graph<Point> {
+pub fn lines(count: i32, size: &Size, rot: f32, mut graph: Graph<Point>) -> Graph<Point> {
     let dist_between = size.width / count as f32;
 
-    let mut graph = Graph::new();
     for i in 0..count {
         let group_i = graph.new_group(false);
         let x = i as f32 * dist_between;
-        for point in make_line_at_x(x, size.height) {
+        for point in make_line_at_x(x, size.height, rot) {
             graph.extend(group_i, point);
         }
     }
     graph
 }
 
+#[macro_export] macro_rules! build_lines {
+    ($a: expr, $b: expr, $c: expr, $d: expr) => { input::graph::lines($a, $b, $c, $d) };
+    ($a: expr, $b: expr, $c: expr) => { input::graph::lines($a, $b, $c, graph::Graph::new()) }
+}
+
 #[allow(dead_code)]
-fn make_line_at_x(x: f32, height: f32) -> Vec<Point> {
-    let segments = 30;
+fn make_line_at_x(x: f32, height: f32, rot: f32) -> Vec<Point> {
+    let segments = 40;
     let dist_between = height / segments as f32;
 
     (0..segments+1).map(|i| {
-        Point::new(x, i as f32 * dist_between, 0.0)
+        Point::new(x + (i as f32) * rot, i as f32 * dist_between, 0.0)
     }).collect()
 }

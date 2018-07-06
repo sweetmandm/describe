@@ -1,1 +1,1 @@
-pub mod graph;
+#[macro_use] pub mod graph;
