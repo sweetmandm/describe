@@ -46,12 +46,10 @@ impl<T: PartialEq> Graph<T> {
         }
     }
 
-    #[allow(dead_code)]
     pub fn kill_node(&mut self, ix: NodeIndex) {
         (&mut self.nodes[ix]).dead = true;
     }
 
-    #[allow(dead_code)]
     pub fn update_node_data(&mut self, ix: NodeIndex, data: T) {
         (&mut self.nodes[ix]).data = data;
     }

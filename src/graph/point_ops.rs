@@ -11,7 +11,6 @@ impl Graph<Point> {
         b
     }
 
-    #[allow(dead_code)]
     pub fn split_edge(&mut self, group_i: GroupIndex, edge_i: EdgeIndex) -> (Point, Point, Point) {
         let (a, c) = self.edge(group_i, edge_i);
         let b = mid(&self.nodes[a].data, &self.nodes[c].data);

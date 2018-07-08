@@ -22,7 +22,6 @@ impl Graph<Point> {
             let x_height = (1.0 * (pos.x + (wind_dir.y * time * 0.001))).sin() + 1.0;
             let y_height = (pos.y / 1.2 + (-wind_dir.y * time * 0.001)).sin();
             let main_wave = x_height + y_height;
-            let aug_wave: f32 = 1.0;
             let wave = wave_height * ((main_wave) / 2.0);
             let mut new_pos = Point::new(pos.x, pos.y, pos.z);
             new_pos.z = -(pos.x*pos.x / 40.0).abs();

@@ -3,7 +3,6 @@ use rand::Rng;
 use graph::*;
 use geometry::*;
 
-#[allow(dead_code)]
 pub fn build_centered(size: &Size) -> Graph<Point> {
     let count = rand::thread_rng().gen_range(4, 10);
     let dist_between = 5.0;
@@ -20,7 +19,6 @@ pub fn build_centered(size: &Size) -> Graph<Point> {
     graph
 }
 
-#[allow(dead_code)]
 pub fn build_random(size: &Size) -> Graph<Point> {
     let count = rand::thread_rng().gen_range(8, 30);
     let mut graph = Graph::new();
@@ -41,7 +39,6 @@ pub fn build_random(size: &Size) -> Graph<Point> {
     graph
 }
 
-#[allow(dead_code)]
 fn make_circle(center: &Point, radius: f32) -> Vec<Point> {
     let segments = 100;
     let dist_between = ::std::f32::consts::PI * 2.0 / segments as f32;
@@ -54,30 +51,23 @@ fn make_circle(center: &Point, radius: f32) -> Vec<Point> {
     }).collect()
 }
 
-pub fn lines(count: i32, size: &Size, rot: f32, mut graph: Graph<Point>) -> Graph<Point> {
+pub fn build_lines(count: i32, segs: i32, size: &Size, rot: f32, mut graph: Graph<Point>) -> Graph<Point> {
     let dist_between = size.width / count as f32;
 
     for i in 0..count {
         let group_i = graph.new_group(false);
         let x = i as f32 * dist_between;
-        for point in make_line_at_x(x, size.height, rot) {
+        for point in make_line_at_x(x, segs, size.height, rot) {
             graph.extend(group_i, point);
         }
     }
     graph
 }
 
-#[macro_export] macro_rules! build_lines {
-    ($a: expr, $b: expr, $c: expr, $d: expr) => { input::graph::lines($a, $b, $c, $d) };
-    ($a: expr, $b: expr, $c: expr) => { input::graph::lines($a, $b, $c, graph::Graph::new()) }
-}
+fn make_line_at_x(x: f32, segs: i32, height: f32, rot: f32) -> Vec<Point> {
+    let dist_between = height / segs as f32;
 
-#[allow(dead_code)]
-fn make_line_at_x(x: f32, height: f32, rot: f32) -> Vec<Point> {
-    let segments = 40;
-    let dist_between = height / segments as f32;
-
-    (0..segments+1).map(|i| {
+    (0..segs+1).map(|i| {
         Point::new(x + (i as f32) * rot, i as f32 * dist_between, 0.0)
     }).collect()
 }

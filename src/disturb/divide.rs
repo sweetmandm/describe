@@ -4,7 +4,6 @@ use geometry::*;
 use graph::*;
 use rand::distributions::{Weighted, WeightedChoice, IndependentSample};
 
-#[allow(dead_code)]
 pub fn run(mut graph: Graph<Point>, iterations: i32) -> Graph<Point> {
     for _ in 0..iterations {
         graph = step(graph);
